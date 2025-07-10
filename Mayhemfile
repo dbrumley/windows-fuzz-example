@@ -1,0 +1,5 @@
+project: mayhem-examples
+target: windows-executable
+cmds:
+	- cmd: /fuzz_target.exe @@
+

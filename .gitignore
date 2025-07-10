@@ -1,0 +1,9 @@
+# CMake build directories
+build/
+CMakeFiles/
+CMakeCache.txt
+*.vcxproj*
+*.sln
+*.exe
+out/
+mayhem_package/
