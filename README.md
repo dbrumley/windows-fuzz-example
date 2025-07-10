@@ -19,3 +19,10 @@ mayhem package .\out\fuzz_target.exe -o mayhem_package
 mayhem run mayhem_package
 ```
 _
+
+## Dotnet
+We can do the same with the dotnet example:
+```bash
+mayhem package .\out\dotnet_fuzz_target.exe -o .\mayhem_dotnet_package
+mayhem run .\mayhem_dotnet_package
+```

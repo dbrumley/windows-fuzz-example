@@ -26,3 +26,19 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out")
 
 
 add_executable(fuzz_target fuzz_target.cpp)
+
+# Path to output executable
+set(DOTNET_OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/dotnet_fuzz_target.exe")
+
+# Add a custom target to compile the C# fuzz target
+add_custom_command(
+    OUTPUT ${DOTNET_OUTPUT}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COMMAND csc.exe /unsafe /nologo /out:${DOTNET_OUTPUT} ${CMAKE_SOURCE_DIR}/dotnet_fuzz_target.cs
+    DEPENDS ${CMAKE_SOURCE_DIR}/dotnet_fuzz_target.cs
+    COMMENT "Building C# dotnet_fuzz_target.exe"
+)
+
+add_custom_target(dotnet_fuzz_target ALL
+    DEPENDS ${DOTNET_OUTPUT}
+)
