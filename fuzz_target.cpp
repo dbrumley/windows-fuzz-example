@@ -4,11 +4,24 @@
 #include <cstring>
 #include <stdexcept> 
 
+
+void test_address_sanitizer_boo(std::string data) {
+    // This function uses a null deref to see if mayhem catches it with 'address_sanitizer' 
+    if (data.size() >= 3) {
+        if (data.c_str()[0] == 'b' && data.c_str()[1] == 'o' && data.c_str()[2] == 'o') {
+            std::cout << "Found 'boo' address sanitizer corner case!\n";
+            int* x = new int[100];
+            x[100] = 5; 
+            delete[] x;
+        }
+    }
+}
+
 void test_deref_mom(std::string data) {
     // This function uses a null deref to see if mayhem catches it with 'mom' 
     if (data.size() >= 3) {
         if (data.c_str()[0] == 'm' && data.c_str()[1] == 'o' && data.c_str()[2] == 'm') {
-            std::cout << "Found 'mom' corner case!\n";
+            std::cout << "Found 'mom' null deref corner case!\n";
             *((volatile int*)0) = 123; // guaranteed crash
         }
 	}
@@ -19,7 +32,21 @@ void test_runtime_error_dad(std::string data) {
     if (data.size() >= 3) {
         if (data.c_str()[0] == 'd' && data.c_str()[1] == 'a' && data.c_str()[2] == 'd') {
             std::cout << "Found 'dad' corner case!\n";
-             throw std::runtime_error("Found 'dad' corner case!"); // Alternative: throw an exception
+             throw std::runtime_error("Found 'dad' runtime_error corner case!"); // Alternative: throw an exception
+        }
+    }
+}
+
+void test_abort_set_behavior_set(std::string data) {
+    // This function uses a null deref to see if mayhem catches it with 'set_behavior' 
+    if (data.size() >= 3) {
+        if (data.c_str()[0] == 's' && data.c_str()[1] == 'e' && data.c_str()[2] == 't') {
+            std::cout << "Found 'set' set_abort_behavior + abort corner case!\n";
+            //  abort() will normally pop-up a dialoge and then silently exit with code 3. 
+            // This disables that behavior to simply crash.
+            _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT); 
+            abort(); // abort();
+
         }
     }
 }
@@ -27,13 +54,9 @@ void test_runtime_error_dad(std::string data) {
 void test_abort_bug(std::string data) {
     // This function uses a null deref to see if mayhem catches it with 'bug' 
 
-    //  abort() will normally pop-up a dialoge and then silently exit with code 3. 
-    // This disables that behavior to simply crash, which Mayhem can detect.
-    _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
-
     if (data.size() >= 3) {
         if (data.c_str()[0] == 'b' && data.c_str()[1] == 'u' && data.c_str()[2] == 'g') {
-            std::cout << "Found 'bug' corner case!\n";
+            std::cout << "Found 'bug' abort corner case!\n";
             abort(); // Uncomment to crash on this condition
         }
     }
@@ -63,6 +86,8 @@ int main(int argc, char* argv[]) {
 	test_abort_bug(data);
 	test_deref_mom(data);
 	test_runtime_error_dad(data);
+	test_abort_set_behavior_set(data);
+	test_address_sanitizer_boo(data);
 
     return 0;
 }
