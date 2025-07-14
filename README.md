@@ -5,17 +5,20 @@ This is a simple example C++ project designed for fuzz testing with [Mayhem](htt
 
 ## Quick Start
 
-**Option: Command Line**:
 
+**Option: Visual Studio Developer Powershell**
 ```bash
-cmake -S . -B build
+cmake -G "NMake Makefiles" -B build
 cmake --build build
 ```
+
+This will generate mayhem packages for MSVC and clang, which you can then run with `mayhem run`.
 
 **Option: Visual Studio**: 
   1. Open this as a directory. Visual studio should recognize cmake and set 
 	 up everything for you.
   2. To compile, run "Build->Build All".
+
 
 Then run:
 ```bash
@@ -23,7 +26,20 @@ mayhem package -o mayhem_package out/fuzz_target_<name>.exe
 copy testsuite/* mayhem_package/testsuite
 mayhem run mayhem_package
 ```
- 
+
+**Option: cgwin command line**:
+
+```bash
+cmake -S . -B build
+cmake --build build
+```
+
+Then run:
+```bash
+mayhem package -o mayhem_package_gplusplus out/fuzz_target_gplusplus.exe
+copy testsuite/* mayhem_package/testsuite
+mayhem run mayhem_package_gplusplus
+```
 
 ## Fuzzing Support with Mayhem
 

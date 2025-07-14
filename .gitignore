@@ -5,5 +5,4 @@ CMakeCache.txt
 *.vcxproj*
 *.sln
 *.exe
-out/
 mayhem_package/
