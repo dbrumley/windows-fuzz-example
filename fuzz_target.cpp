@@ -1,10 +1,11 @@
-﻿#include <fstream>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <cstring>
 #include <stdexcept>
 #include <assert.h>
 #include <windows.h>
+#include <stdlib.h>
 
 
 void test_address_sanitizer_boo(std::string data) {
@@ -14,7 +15,7 @@ void test_address_sanitizer_boo(std::string data) {
             // Note: this will crash powershell in MSVC. 
             std::cout << "Found 'boo' address sanitizer corner case!\n";
             int* x = new int[100];
-            x[100] = 5; 
+            x[100] = 5;
             delete[] x;
         }
     }
@@ -27,7 +28,7 @@ void test_null_deref_mom(std::string data) {
             std::cout << "Found 'mom' null deref corner case!\n";
             *((volatile int*)0) = 123; // guaranteed crash
         }
-	}
+    }
 }
 
 void test_runtime_error_dad(std::string data) {
@@ -35,7 +36,7 @@ void test_runtime_error_dad(std::string data) {
     if (data.size() >= 3) {
         if (data.c_str()[0] == 'd' && data.c_str()[1] == 'a' && data.c_str()[2] == 'd') {
             std::cout << "Found 'dad' corner case!\n";
-             throw std::runtime_error("Found 'dad' runtime_error corner case!"); // Alternative: throw an exception
+            throw std::runtime_error("Found 'dad' runtime_error corner case!"); // Alternative: throw an exception
         }
     }
 }
@@ -58,19 +59,6 @@ void test_raise_fail_fast_dog(std::string data) {
     }
 }
 
-void test_abort_set_behavior_set(std::string data) {
-    // This function uses a null deref to see if mayhem catches it with 'set_behavior' 
-    if (data.size() >= 3) {
-        if (data.c_str()[0] == 's' && data.c_str()[1] == 'e' && data.c_str()[2] == 't') {
-            std::cout << "Found 'set' set_abort_behavior + abort corner case!\n";
-            //  abort() will normally pop-up a dialoge and then silently exit with code 3. 
-            // This disables that behavior to simply crash.
-            _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
-            abort(); // abort(). You'll see this in the crash 
-
-        }
-    }
-}
 
 void test_abort_bug(std::string data) {
     // This function uses a null deref to see if mayhem catches it with 'bug' 
@@ -95,22 +83,29 @@ int main(int argc, char* argv[]) {
 
     std::ifstream file(argv[1], std::ios::binary);
     if (!file) {
-		std::cerr << "Error opening file: " << argv[1] << "\n";
+        std::cerr << "Error opening file: " << argv[1] << "\n";
         return 1;
     }
 
     std::string data((std::istreambuf_iterator<char>(file)),
         std::istreambuf_iterator<char>());
 
-	std::cout << "Read " << data.c_str() << " from input file.\n";
+    std::cout << "Read " << data.c_str() << " from input file.\n";
 
-	test_abort_bug(data);
-	test_null_deref_mom(data);
-	test_runtime_error_dad(data);
-	test_abort_set_behavior_set(data);
-	test_address_sanitizer_boo(data);
-	test_raise_fail_fast_dog(data);
-	test_assert_cab(data);
+#ifdef _MSC_VER
+    // abort() displays a message box, then exits.
+    // assert() may not crash or trigger a debugger, depending on the CRT configuration.
+    // This disables the message box, but does not solve the whole problem.
+    // This is only available in MSVC. 
+    _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+#endif
+
+    test_abort_bug(data);
+    test_assert_cab(data);
+    test_null_deref_mom(data);
+    test_runtime_error_dad(data);
+    test_address_sanitizer_boo(data);
+    test_raise_fail_fast_dog(data);
 
     return 0;
 }
