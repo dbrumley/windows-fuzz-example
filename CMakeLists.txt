@@ -10,10 +10,11 @@ file(MAKE_DIRECTORY ${OUTPUT_DIR})
 find_program(MSVC_CL cl.exe)
 find_program(CLANG_CL clang++.exe)
 find_program(CSC_CL csc.exe)
+find_program(MINGW_CL g++.exe)
 
 # Uncomment in cygwin. 
-set(ENV{PATH} "C:/cygwin64/bin;$ENV{PATH}")
-find_program(GCC_CL g++)
+#set(ENV{PATH} "C:/cygwin64/bin;$ENV{PATH}")
+#find_program(GCC_CL g++)
 
 # Function: build fuzz binary
 function(add_fuzz_target name compiler_cmd)
@@ -85,9 +86,16 @@ if(EXISTS "${CLANG_CL}")
     add_mayhem_package("clang_asan")
 endif()
 
+if(EXISTS "${MINGW_CL}")
+    add_fuzz_target("mingw" "${GCC_CL}" -g )
+    add_mayhem_package("mingw")
+endif()
+
 if(EXISTS "${GCC_CL}")
     add_fuzz_target("gplusplus" "${GCC_CL}" -g -O1)
 endif()
+
+
 
 # Optional: .NET target (not packaged)
 if(EXISTS "${CSC_CL}")
