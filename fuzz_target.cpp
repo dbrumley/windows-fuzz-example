@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
     std::string data((std::istreambuf_iterator<char>(file)),
         std::istreambuf_iterator<char>());
 
-    std::cout << "Read " << data.c_str() << " from input file.\n";
+    //std::cout << "Read " << data.c_str() << " from input file.\n";
 
 #ifdef _MSC_VER
     // abort() displays a message box, then exits.
