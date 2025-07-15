@@ -87,7 +87,7 @@ if(EXISTS "${CLANG_CL}")
 endif()
 
 if(EXISTS "${MINGW_CL}")
-    add_fuzz_target("mingw" "${GCC_CL}" -g )
+    add_fuzz_target("mingw" "${MINGW_CL}" -g )
     add_mayhem_package("mingw")
 endif()
 
