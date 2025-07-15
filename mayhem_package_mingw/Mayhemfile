@@ -3,17 +3,17 @@
 # Format: YAML 1.1
 
 # Project name that the target belongs to
-project: dbrumley/fuzz-target-mingw-gcc-exe
+project: dbrumley/fuzz-target-mingw-exe
 
 # Target name (should be unique within the project)
-target: fuzz-target-mingw-gcc-exe
+target: fuzz-target-mingw-exe
 
 # List of commands used to test the target
 cmds:
 
   # Command used to start the target, "@@" is the input file
   # (when "@@" is omitted Mayhem defaults to stdin inputs)
-  - cmd: /Users/dbrum/source/repos/dbrumley/windows-fuzz-example/out/fuzz_target_mingw_gcc.exe @@
+  - cmd: /Users/dbrum/source/repos/dbrumley/windows-fuzz-example/out/fuzz_target_mingw.exe @@
     env: {}
 
     ## Uncomment to change default dir (/) from which the target is invoked
